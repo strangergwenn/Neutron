@@ -34,7 +34,7 @@ void FNeutronContract::Load(const TSharedPtr<FJsonObject>& Data)
 {
 	NCHECK(Data.IsValid());
 
-	Type = static_cast<ENeutronContractType>(Data->GetNumberField("Data"));
+	Type = static_cast<ENeutronContractType>(Data->GetNumberField("Type"));
 }
 
 /*----------------------------------------------------
@@ -69,6 +69,8 @@ void UNeutronContractManager::Load(const FNeutronContractManagerSave& SaveData)
 	// Reset the state from a potential previous session
 	CurrentContracts.Empty();
 	GeneratedContract.Reset();
+
+	NCHECK(ContractGenerator.IsBound());
 
 	// Load contracts
 	if (SaveData.ContractSaveData.Num())
