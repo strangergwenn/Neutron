@@ -30,7 +30,12 @@
     Constructor
 ----------------------------------------------------*/
 
-ANeutronPlayerController::ANeutronPlayerController() : Super(), LastNetworkError(ENeutronNetworkError::Success)
+ANeutronPlayerController::ANeutronPlayerController()
+	: Super()
+	, LastNetworkError(ENeutronNetworkError::Success)
+	, CurrentCameraState(0)
+	, CurrentTimeInCameraState(0)
+	, SharedTransitionActive(false)
 {}
 
 /*----------------------------------------------------
@@ -65,6 +70,8 @@ void ANeutronPlayerController::PlayerTick(float DeltaTime)
 				Notify(LOCTEXT("NetworkError", "Network error"), SessionsManager->GetNetworkErrorString(), ENeutronNotificationType::Error);
 			}
 		}
+
+		CurrentTimeInCameraState += DeltaTime;
 	}
 }
 
@@ -177,6 +184,122 @@ bool ANeutronPlayerController::IsOnMainMenu() const
 bool ANeutronPlayerController::IsMenuOnly() const
 {
 	return Cast<ANeutronWorldSettings>(GetWorld()->GetWorldSettings())->IsMenuMap();
+}
+
+/*----------------------------------------------------
+    Shared transitions
+----------------------------------------------------*/
+
+void ANeutronPlayerController::SharedTransition(
+	uint8 NewCameraState, FNeutronAsyncAction StartAction, FNeutronAsyncCondition Condition, FNeutronAsyncAction FinishAction)
+{
+	NCHECK(GetLocalRole() == ROLE_Authority);
+	NLOG("ANeutronPlayerController::ServerSharedTransition");
+
+	for (ANeutronPlayerController* OtherPlayer : TActorRange<ANeutronPlayerController>(GetWorld()))
+	{
+		OtherPlayer->ClientStartSharedTransition(NewCameraState);
+	}
+
+	SharedTransitionStartAction  = StartAction;
+	SharedTransitionFinishAction = FinishAction;
+	SharedTransitionCondition    = Condition;
+}
+
+void ANeutronPlayerController::ClientStartSharedTransition_Implementation(uint8 NewCameraState)
+{
+	NLOG("ANeutronPlayerController::ClientStartSharedTransition_Implementation");
+
+	// Shared transitions work like this :
+	// - Server signals all players to fade to black through this very method
+	// - Once faded, Action is called and all players call ServerSharedTransitionReady() to signal they're dark
+	// - Server fires SharedTransitionStartAction when all clients have called ServerSharedTransitionReady()
+	// - Server fires SharedTransitionFinishAction once SharedTransitionCondition returns true on the server
+	// - Server then calls ClientStopSharedTransition() on all players so that they know to resume
+	// - All players then fade back to the game
+
+	SharedTransitionActive = true;
+
+	// Action : mark as in shared transition locally and remotely
+	FNeutronAsyncAction Action = FNeutronAsyncAction::CreateLambda(
+		[=]()
+		{
+			SetCameraState(NewCameraState);
+			ServerSharedTransitionReady();
+			NLOG("ANeutronPlayerController::ClientStartSharedTransition_Implementation : done, waiting for server");
+		});
+
+	// Condition : on server, when all clients have reported as ready
+	// On client, when the server has signaled to stop
+	FNeutronAsyncCondition Condition = FNeutronAsyncCondition::CreateLambda(
+		[=]()
+		{
+			if (GetLocalRole() == ROLE_Authority)
+			{
+				// Check if all players are in transition
+				bool AllPlayersInTransition = true;
+				for (ANeutronPlayerController* OtherPlayer : TActorRange<ANeutronPlayerController>(GetWorld()))
+				{
+					if (!OtherPlayer->SharedTransitionActive)
+					{
+						AllPlayersInTransition = false;
+						break;
+					}
+				}
+
+				// Once all players are in the transition, fire the start event, wait for the condition, fire the end event, and stop
+				if (AllPlayersInTransition)
+				{
+					SharedTransitionStartAction.ExecuteIfBound();
+					SharedTransitionStartAction.Unbind();
+
+					if (!SharedTransitionCondition.IsBound() || SharedTransitionCondition.Execute())
+					{
+						SharedTransitionFinishAction.ExecuteIfBound();
+						SharedTransitionFinishAction.Unbind();
+						SharedTransitionCondition.Unbind();
+
+						for (ANeutronPlayerController* OtherPlayer : TActorRange<ANeutronPlayerController>(GetWorld()))
+						{
+							OtherPlayer->ClientStopSharedTransition();
+						}
+
+						return true;
+					}
+				}
+
+				return false;
+			}
+			else
+			{
+				return !SharedTransitionActive;
+			}
+		});
+
+	// Run the process
+	if (GetSharedTransitionMenuState(NewCameraState))
+	{
+		UNeutronMenuManager::Get()->OpenMenu(Action, Condition);
+	}
+	else
+	{
+		UNeutronMenuManager::Get()->CloseMenu(Action, Condition);
+	}
+}
+
+void ANeutronPlayerController::ClientStopSharedTransition_Implementation()
+{
+	NLOG("ANeutronPlayerController::ClientStopSharedTransition_Implementation");
+
+	SharedTransitionActive = false;
+}
+
+void ANeutronPlayerController::ServerSharedTransitionReady_Implementation()
+{
+	NCHECK(GetLocalRole() == ROLE_Authority);
+	NLOG("ANeutronPlayerController::ServerSharedTransitionReady_Implementation");
+
+	SharedTransitionActive = true;
 }
 
 /*----------------------------------------------------

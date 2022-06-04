@@ -89,6 +89,74 @@ public:
 	}
 
 	/*----------------------------------------------------
+	    Shared transitions
+	----------------------------------------------------*/
+
+	/** Run a shared transition with a fade to black on all clients */
+	template <typename T>
+	void SharedTransition(T NewCameraState, FNeutronAsyncAction StartAction = FNeutronAsyncAction(),
+		FNeutronAsyncCondition Condition = FNeutronAsyncCondition(), FNeutronAsyncAction FinishAction = FNeutronAsyncAction())
+	{
+		SharedTransition((uint8) NewCameraState, StartAction, Condition, FinishAction);
+	}
+
+	/** Run a shared transition with a fade to black on all clients */
+	void SharedTransition(
+		uint8 NewCameraState, FNeutronAsyncAction StartAction, FNeutronAsyncCondition Condition, FNeutronAsyncAction FinishAction);
+
+	/** Signal a client that a shared transition is starting */
+	UFUNCTION(Client, Reliable)
+	void ClientStartSharedTransition(uint8 NewCameraState);
+
+	/** Signal a client that the transition is complete */
+	UFUNCTION(Client, Reliable)
+	void ClientStopSharedTransition();
+
+	/** Signal the server that the transition is ready */
+	UFUNCTION(Server, Reliable)
+	void ServerSharedTransitionReady();
+
+	/** Check if the player is currently in a shared transition */
+	UFUNCTION(Category = Nova, BlueprintCallable)
+	bool IsInSharedTransition() const
+	{
+		return SharedTransitionActive;
+	}
+
+	/** Set the current camera state */
+	template <typename T>
+	void SetCameraState(T State)
+	{
+		CurrentCameraState       = (uint8) State;
+		CurrentTimeInCameraState = 0;
+
+		OnCameraStateChanged();
+	}
+
+	/** Get the camera state */
+	template <typename T>
+	T GetCameraState() const
+	{
+		return (T) CurrentCameraState;
+	}
+
+	/** Get the time spent in the current state in seconds */
+	float GetCurrentTimeInCameraState() const
+	{
+		return CurrentTimeInCameraState;
+	}
+
+	/** Current camera state changed */
+	virtual void OnCameraStateChanged()
+	{}
+
+	/** Decide whether a particular state should have the menu visible */
+	virtual bool GetSharedTransitionMenuState(uint8 NewCameraState)
+	{
+		return false;
+	}
+
+	/*----------------------------------------------------
 	    Input
 	----------------------------------------------------*/
 
@@ -119,4 +187,12 @@ private:
 
 	// General state
 	ENeutronNetworkError LastNetworkError;
+	uint8                CurrentCameraState;
+	float                CurrentTimeInCameraState;
+
+	// Transitions
+	bool                   SharedTransitionActive;
+	FNeutronAsyncAction    SharedTransitionStartAction;
+	FNeutronAsyncAction    SharedTransitionFinishAction;
+	FNeutronAsyncCondition SharedTransitionCondition;
 };
