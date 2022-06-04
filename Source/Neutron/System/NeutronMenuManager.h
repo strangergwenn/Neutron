@@ -175,14 +175,14 @@ public:
 	}
 
 	/** Get the main menu */
-	template <typename T = SNeutronMenu>
+	template <typename T = class SNeutronMenu>
 	TSharedPtr<T> GetMenu()
 	{
 		return StaticCastSharedPtr<T>(Menu);
 	}
 
 	/** Get the game overlay */
-	template <typename T = SWidget>
+	template <typename T = class SWidget>
 	TSharedPtr<T> GetOverlay() const
 	{
 		return StaticCastSharedPtr<T>(Overlay);
