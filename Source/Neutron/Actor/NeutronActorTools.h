@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Neutron/Settings/NeutronGameUserSettings.h"
 #include "NeutronActorTools.generated.h"
 
 /*----------------------------------------------------
@@ -57,13 +58,7 @@ struct NEUTRON_API FNeutronCameraInputFilter
 public:
 
 	FNeutronCameraInputFilter()
-		: Velocity(150.0f)
-		, GamepadMultiplier(0.5f)
-		, Acceleration(250.0f)
-		, Resistance(1.0f / 360.0f)
-		, InputPower(3.0f)
-		, Brake(2.0f)
-		, Brake2(4.0f)
+		: Velocity(150.0f), Acceleration(250.0f), Resistance(1.0f / 360.0f), InputPower(3.0f), Brake(2.0f), Brake2(4.0f)
 	{}
 
 public:
@@ -72,11 +67,9 @@ public:
 	template <bool UnwindPosition = false, typename T>
 	void ApplyFilter(T& CurrentPosition, T& CurrentVelocity, T& TargetPosition, const float DeltaTime, const bool IsGamepad) const
 	{
-		T MaximumVelocity = Velocity;
-		if (IsGamepad)
-		{
-			MaximumVelocity *= GamepadMultiplier;
-		}
+		const UNeutronGameUserSettings* GameUserSettings = Cast<UNeutronGameUserSettings>(GEngine->GetGameUserSettings());
+
+		T MaximumVelocity = Velocity * (IsGamepad ? GameUserSettings->GamepadSensitivity : GameUserSettings->MouseSensitivity);
 
 		// Compute acceleration and resistance
 		T Acc = FMath::Pow(TargetPosition, static_cast<T>(InputPower)) * Acceleration;
@@ -119,10 +112,6 @@ public:
 	// Angular velocity of camera in °/s
 	UPROPERTY(Category = Neutron, EditDefaultsOnly)
 	float Velocity;
-
-	// Velocity multiplier when using a gamepad
-	UPROPERTY(Category = Neutron, EditDefaultsOnly)
-	float GamepadMultiplier;
 
 	// Camera acceleration force in °/s²
 	UPROPERTY(Category = Neutron, EditDefaultsOnly)

@@ -135,8 +135,8 @@ void UNeutronGameUserSettings::SetToDefaults()
 	EnableCrashReports = true;
 
 	// Gameplay
-	MouseSensitivity   = 0.8f;
-	GamepadSensitivity = 2.0f;
+	MouseSensitivity   = 1.0f;
+	GamepadSensitivity = 0.5f;
 	FOV                = 90.0f;
 
 	// Sound
