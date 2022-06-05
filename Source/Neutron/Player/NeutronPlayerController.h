@@ -165,7 +165,7 @@ public:
 	virtual void SetupInputComponent() override;
 
 	/** Any key pressed */
-	void AnyKey(FKey Key);
+	virtual void AnyKey(FKey Key);
 
 	/** Toggle the main menu */
 	void ToggleMenuOrQuit();
