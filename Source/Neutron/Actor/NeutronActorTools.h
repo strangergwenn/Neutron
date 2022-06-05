@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Neutron/Settings/NeutronGameUserSettings.h"
+#include "Engine/Engine.h"
 #include "NeutronActorTools.generated.h"
 
 /*----------------------------------------------------
