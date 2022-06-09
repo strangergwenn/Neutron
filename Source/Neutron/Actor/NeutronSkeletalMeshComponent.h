@@ -78,6 +78,11 @@ public:
 		return FNeutronMeshInterfaceBehavior::GetMaterializationAlpha() == 0;
 	}
 
+	virtual bool IsMaterialized() const override
+	{
+		return FNeutronMeshInterfaceBehavior::GetMaterializationAlpha() == 1;
+	}
+
 	virtual void RequestParameter(FName Name, float Value, bool Immediate = false) override
 	{
 		FNeutronMeshInterfaceBehavior::RequestParameter(Name, Value, Immediate);

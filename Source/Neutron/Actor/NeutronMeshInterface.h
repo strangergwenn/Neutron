@@ -144,6 +144,9 @@ public:
 	/** Check if the mesh is entirely invisible */
 	virtual bool IsDematerialized() const = 0;
 
+	/** Check if the mesh is entirely visible */
+	virtual bool IsMaterialized() const = 0;
+
 	/** Asynchronously set a float parameter */
 	virtual void RequestParameter(FName Name, float Value, bool Immediate = false) = 0;
 
