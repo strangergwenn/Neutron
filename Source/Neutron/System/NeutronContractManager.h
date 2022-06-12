@@ -51,7 +51,7 @@ struct FNeutronContractManagerSave
 	TArray<FString> ContractSaveData;
 
 	UPROPERTY()
-	int32 CurrentTrackedContract;
+	int32 CurrentTrackedContract = INDEX_NONE;
 };
 
 // Contract creation delegate
