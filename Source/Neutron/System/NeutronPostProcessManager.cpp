@@ -52,6 +52,7 @@ void UNeutronPostProcessManager::BeginPlay(
 		{
 			TArray<FWeightedBlendable> Blendables = PostProcessVolume->Settings.WeightedBlendables.Array;
 			PostProcessVolume->Settings.WeightedBlendables.Array.Empty();
+			PostProcessMaterials.Empty();
 
 			for (FWeightedBlendable Blendable : Blendables)
 			{
@@ -59,10 +60,7 @@ void UNeutronPostProcessManager::BeginPlay(
 				NCHECK(BaseMaterial);
 
 				UMaterialInstanceDynamic* MaterialInstance = UMaterialInstanceDynamic::Create(BaseMaterial, GetWorld());
-				if (!IsValid(PostProcessMaterial))
-				{
-					PostProcessMaterial = MaterialInstance;
-				}
+				PostProcessMaterials.Add(MaterialInstance);
 
 				PostProcessVolume->Settings.AddBlendable(MaterialInstance, 1.0f);
 			}
@@ -108,7 +106,7 @@ void UNeutronPostProcessManager::Tick(float DeltaTime)
 		float InterpolatedAlpha = FMath::InterpEaseInOut(0.0f, 1.0f, CurrentPresetAlpha, ENeutronUIConstants::EaseStandard);
 		TSharedPtr<FNeutronPostProcessSettingBase>& CurrentPostProcess = PostProcessSettings[0];
 		TSharedPtr<FNeutronPostProcessSettingBase>& TargetPostProcess  = PostProcessSettings[CurrentPreset];
-		UpdateFunction.ExecuteIfBound(PostProcessVolume, PostProcessMaterial, CurrentPostProcess, TargetPostProcess, CurrentPresetAlpha);
+		UpdateFunction.ExecuteIfBound(PostProcessVolume, PostProcessMaterials, CurrentPostProcess, TargetPostProcess, CurrentPresetAlpha);
 
 		// Apply config-driven settings
 		UNeutronGameUserSettings* GameUserSettings        = Cast<UNeutronGameUserSettings>(GEngine->GetGameUserSettings());

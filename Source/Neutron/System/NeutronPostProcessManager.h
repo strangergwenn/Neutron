@@ -23,7 +23,7 @@ struct FNeutronPostProcessSettingBase
 
 // Control function to determine the post-processing index
 DECLARE_DELEGATE_RetVal(int32, FNeutronPostProcessControl);
-DECLARE_DELEGATE_FiveParams(FNeutronPostProcessUpdate, class UPostProcessComponent*, class UMaterialInstanceDynamic*,
+DECLARE_DELEGATE_FiveParams(FNeutronPostProcessUpdate, class UPostProcessComponent*, TArray<class UMaterialInstanceDynamic*>,
 	const TSharedPtr<FNeutronPostProcessSettingBase>&, const TSharedPtr<FNeutronPostProcessSettingBase>&, float);
 
 /** Post-processing owner */
@@ -107,9 +107,9 @@ protected:
 	// Singleton pointer
 	static UNeutronPostProcessManager* Singleton;
 
-	// Post-process material that's dynamically controlled
+	// Post-process materials that are dynamically controlled
 	UPROPERTY()
-	class UMaterialInstanceDynamic* PostProcessMaterial;
+	TArray<class UMaterialInstanceDynamic*> PostProcessMaterials;
 
 	// Post-process component that's dynamically controlled
 	UPROPERTY()
