@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Neutron/Settings/NeutronGameUserSettings.h"
+#include "Kismet/GameplayStatics.h"
 #include "Engine/Engine.h"
 #include "NeutronActorTools.generated.h"
 
@@ -17,6 +18,24 @@ class NEUTRON_API UNeutronActorTools : public UObject
 	GENERATED_BODY()
 
 public:
+
+	/** Return the closest actor of a class */
+	template <typename T>
+	static T* GetClosestActor(const UObject* WorldContextObject, const FVector& BaseLocation)
+	{
+		TArray<AActor*> Candidates;
+		UGameplayStatics::GetAllActorsOfClass(WorldContextObject->GetWorld(), T::StaticClass(), Candidates);
+
+		if (Candidates.Num())
+		{
+			SortActorsByClosestDistance(Candidates, BaseLocation);
+			return Cast<T>(Candidates[0]);
+		}
+		else
+		{
+			return nullptr;
+		}
+	}
 
 	/** Sort actors from closest to farthest from location */
 	static void SortActorsByClosestDistance(TArray<AActor*>& Actors, const FVector& BaseLocation);
