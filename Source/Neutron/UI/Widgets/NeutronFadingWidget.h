@@ -251,7 +251,7 @@ DECLARE_DELEGATE_RetVal(FText, FNeutronTextGetter);
 /** Simple STextBlock analog that fades smoothly when the text changes */
 class SNeutronText : public SNeutronFadingWidget<false>
 {
-	SLATE_BEGIN_ARGS(SNeutronText) : _AutoWrapText(false)
+	SLATE_BEGIN_ARGS(SNeutronText) : _AutoWrapText(false), _Justification(ETextJustify::Left)
 	{}
 
 	SLATE_ARGUMENT(FNeutronTextGetter, Text)
@@ -259,6 +259,7 @@ class SNeutronText : public SNeutronFadingWidget<false>
 	SLATE_ATTRIBUTE(float, WrapTextAt)
 	SLATE_ATTRIBUTE(bool, AutoWrapText)
 	SLATE_ATTRIBUTE(EVisibility, Visibility)
+	SLATE_ATTRIBUTE(ETextJustify::Type, Justification)
 
 	SLATE_END_ARGS()
 
@@ -285,6 +286,7 @@ public:
 			.AutoWrapText(InArgs._AutoWrapText)
 			.ColorAndOpacity(this, &SNeutronFadingWidget::GetSlateColor)
 			.Visibility(InArgs._Visibility)
+			.Justification(InArgs._Justification)
 		];
 		// clang-format on
 	}
@@ -339,13 +341,14 @@ protected:
 /** Simple SRichTextBlock analog that fades smoothly when the text changes */
 class SNeutronRichText : public SNeutronText
 {
-	SLATE_BEGIN_ARGS(SNeutronRichText) : _AutoWrapText(false)
+	SLATE_BEGIN_ARGS(SNeutronRichText) : _AutoWrapText(false), _Justification(ETextJustify::Left)
 	{}
 
 	SLATE_ARGUMENT(FNeutronTextGetter, Text)
 	SLATE_STYLE_ARGUMENT(FTextBlockStyle, TextStyle)
 	SLATE_ATTRIBUTE(float, WrapTextAt)
 	SLATE_ATTRIBUTE(bool, AutoWrapText)
+	SLATE_ATTRIBUTE(ETextJustify::Type, Justification)
 
 	SLATE_END_ARGS()
 
@@ -375,6 +378,7 @@ public:
 				.TextStyle(InArgs._TextStyle)
 				.WrapTextAt(InArgs._WrapTextAt)
 				.AutoWrapText(InArgs._AutoWrapText)
+				.Justification(InArgs._Justification)
 				.DecoratorStyleSet(&FNeutronStyleSet::GetStyle())
 				+ SRichTextBlock::ImageDecorator()
 			]
