@@ -135,11 +135,11 @@ bool SNeutronSlider::HorizontalAnalogInput(float Value)
 		}
 		else if (Slider->GetValue() == CurrentValue)
 		{
-			if (Value >= 1.0f)
+			if (Value >= 0.8f)
 			{
 				OnIncrement();
 			}
-			else if (Value <= -1.0f)
+			else if (Value <= -0.8f)
 			{
 				OnDecrement();
 			}
