@@ -13,6 +13,7 @@ struct NEUTRON_API FNeutronMainTheme : public FSlateWidgetStyle
 
 	FNeutronMainTheme()
 		: GenericMenuWidth(700)
+		, GenericMenuHeight(600)
 		, BlurRadius(0)
 		, BlurStrength(0)
 		, PositiveColor(FLinearColor::Blue)
@@ -61,6 +62,7 @@ struct NEUTRON_API FNeutronMainTheme : public FSlateWidgetStyle
 	UPROPERTY(EditDefaultsOnly, Category = General) FMargin ContentPadding;
 	UPROPERTY(EditDefaultsOnly, Category = General) FMargin VerticalContentPadding;
 	UPROPERTY(EditDefaultsOnly, Category = General) int32 GenericMenuWidth;
+	UPROPERTY(EditDefaultsOnly, Category = General) int32 GenericMenuHeight;
 	UPROPERTY(EditDefaultsOnly, Category = General) float BlurRadius;
 	UPROPERTY(EditDefaultsOnly, Category = General) float BlurStrength;
 	UPROPERTY(EditDefaultsOnly, Category = General) FLinearColor PositiveColor;

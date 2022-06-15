@@ -81,13 +81,13 @@ void SNeutronModalPanel::Construct(const FArguments& InArgs)
 							[
 								SAssignNew(InformationText, STextBlock)
 								.TextStyle(&Theme.InfoFont)
-								.WrapTextAt(750)
+								.WrapTextAt(Theme.GenericMenuWidth)
 							]
 
 							+ SVerticalBox::Slot()
 							[
 								SAssignNew(ContentBox, SBox)
-								.MaxDesiredHeight(750)
+								.MaxDesiredHeight(Theme.GenericMenuHeight)
 							]
 						]
 
