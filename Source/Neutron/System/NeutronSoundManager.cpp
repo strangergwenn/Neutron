@@ -257,7 +257,7 @@ void UNeutronSoundManager::SetMusicVolume(int32 Volume)
 void UNeutronSoundManager::Tick(float DeltaTime)
 {
 	// Control the music track
-	if (MusicSoundInstance.IsValid())
+	if (MusicSoundInstance.IsValid() && MasterVolume > 0)
 	{
 		DesiredMusicTrack = MusicCallback.IsBound() ? MusicCallback.Execute() : NAME_None;
 
