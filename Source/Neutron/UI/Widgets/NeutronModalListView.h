@@ -20,6 +20,7 @@ public:
 
 	DECLARE_DELEGATE_RetVal(SelfRefreshType, FNeutronOnSelfRefresh);
 	DECLARE_DELEGATE_RetVal_OneParam(TSharedRef<SWidget>, FNeutronOnGenerateItem, ItemType);
+	DECLARE_DELEGATE_RetVal_TwoParams(bool, FNeutronOnFilterItem, ItemType, TArray<int32>);
 	DECLARE_DELEGATE_RetVal_OneParam(FText, FNeutronOnGenerateName, ItemType);
 	DECLARE_DELEGATE_RetVal_OneParam(FText, FNeutronOnGenerateTooltip, ItemType);
 	DECLARE_DELEGATE_TwoParams(FNeutronListSelectionChanged, ItemType, int32);
@@ -40,6 +41,7 @@ private:
 		, _ButtonSize("DefaultButtonSize")
 		, _ListButtonTheme("DefaultButton")
 		, _ListButtonSize("DoubleButtonSize")
+		, _FilterButtonSize("DefaultButtonSize")
 	{}
 
 	SLATE_ARGUMENT(SNeutronNavigationPanel*, Panel)
@@ -50,10 +52,12 @@ private:
 	SLATE_ATTRIBUTE(bool, Enabled)
 	SLATE_ATTRIBUTE(bool, Focusable)
 	SLATE_ARGUMENT(bool, ActionFocusable)
+	SLATE_ARGUMENT(TArray<FText>, FilterOptions)
 
 	SLATE_ARGUMENT(FSimpleDelegate, OnDoubleClicked)
 	SLATE_ARGUMENT(FNeutronOnSelfRefresh, OnSelfRefresh)
 	SLATE_EVENT(FNeutronOnGenerateItem, OnGenerateItem)
+	SLATE_EVENT(FNeutronOnFilterItem, OnFilterItem)
 	SLATE_EVENT(FNeutronOnGenerateName, OnGenerateName)
 	SLATE_EVENT(FNeutronOnGenerateTooltip, OnGenerateTooltip)
 	SLATE_EVENT(FNeutronListSelectionChanged, OnSelectionChanged)
@@ -63,6 +67,7 @@ private:
 	SLATE_ARGUMENT(FName, ButtonSize)
 	SLATE_ARGUMENT(FName, ListButtonTheme)
 	SLATE_ARGUMENT(FName, ListButtonSize)
+	SLATE_ARGUMENT(FName, FilterButtonSize)
 	SLATE_ARGUMENT(FNeutronButtonUserSizeCallback, UserSizeCallback)
 	SLATE_NAMED_SLOT(FArguments, ButtonContent)
 
@@ -81,7 +86,11 @@ public:
 		OnSelfRefresh      = InArgs._OnSelfRefresh;
 		OnGenerateName     = InArgs._OnGenerateName;
 		OnSelectionChanged = InArgs._OnSelectionChanged;
-		ListPanel          = InArgs._Panel->GetMenu()->CreateModalPanel();
+		ListPanel          = InArgs._Panel->GetMenu()->CreateModalPanel(FNeutronAsyncCondition::CreateLambda(    //
+            [this]()
+            {
+                return IsConfirmEnabled();
+            }));
 
 		SNeutronButton::Construct(
 			SNeutronButton::FArguments()
@@ -104,12 +113,15 @@ public:
 		SAssignNew(ListView, SNeutronListView<ItemType>)
 			.Panel(ListPanel.Get())
 			.ItemsSource(InArgs._ItemsSource ? InArgs._ItemsSource : &InternalItemsSource)
+			.FilterOptions(InArgs._FilterOptions)
 			.OnGenerateItem(InArgs._OnGenerateItem)
+			.OnFilterItem(InArgs._OnFilterItem)
 			.OnGenerateTooltip(InArgs._OnGenerateTooltip)
 			.OnSelectionChanged(this, &SNeutronModalListView::OnListSelectionChanged)
 			.OnSelectionDoubleClicked(this, &SNeutronModalListView::OnListConfirmed)
 			.ButtonTheme(InArgs._ListButtonTheme)
-			.ButtonSize(InArgs._ListButtonSize);
+			.ButtonSize(InArgs._ListButtonSize)
+			.FilterButtonSize(InArgs._FilterButtonSize);
 	}
 
 	/*----------------------------------------------------
@@ -204,6 +216,19 @@ protected:
 	{
 		CurrentSelected          = Selected;
 		CurrentUserSelectedIndex = Index;
+	}
+
+	bool IsConfirmEnabled() const
+	{
+		for (const TSharedPtr<SNeutronButton>& Button : ListView->GetFilterButtons())
+		{
+			if (Button->IsFocused())
+			{
+				return false;
+			}
+		}
+
+		return true;
 	}
 
 	/*----------------------------------------------------

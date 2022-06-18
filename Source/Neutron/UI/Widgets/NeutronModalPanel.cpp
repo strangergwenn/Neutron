@@ -19,6 +19,7 @@ void SNeutronModalPanel::Construct(const FArguments& InArgs)
 	// Setup
 	const FNeutronMainTheme&   Theme       = FNeutronStyleSet::GetMainTheme();
 	const FNeutronButtonTheme& ButtonTheme = FNeutronStyleSet::GetButtonTheme();
+	OnIsConfirmEnabled                     = InArgs._IsConfirmEnabled;
 
 	// Parent constructor
 	SNeutronNavigationPanel::Construct(SNeutronNavigationPanel::FArguments().Menu(InArgs._Menu));
@@ -249,7 +250,14 @@ EVisibility SNeutronModalPanel::GetConfirmVisibility() const
 
 bool SNeutronModalPanel::IsConfirmEnabled() const
 {
-	return true;
+	if (OnIsConfirmEnabled.IsBound())
+	{
+		return OnIsConfirmEnabled.Execute();
+	}
+	else
+	{
+		return true;
+	}
 }
 
 EVisibility SNeutronModalPanel::GetDismissVisibility() const

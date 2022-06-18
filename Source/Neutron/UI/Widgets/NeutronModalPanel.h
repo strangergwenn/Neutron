@@ -19,6 +19,7 @@ class NEUTRON_API SNeutronModalPanel : public SNeutronNavigationPanel
 	{}
 
 	SLATE_ARGUMENT(class SNeutronMenu*, Menu)
+	SLATE_ARGUMENT(FNeutronAsyncCondition, IsConfirmEnabled)
 
 	SLATE_END_ARGS()
 
@@ -94,10 +95,11 @@ protected:
 	SNeutronNavigationPanel* ParentPanel;
 
 	// Settings
-	float           FadeDuration;
-	FSimpleDelegate OnConfirmed;
-	FSimpleDelegate OnDismissed;
-	FSimpleDelegate OnCancelled;
+	float                  FadeDuration;
+	FSimpleDelegate        OnConfirmed;
+	FSimpleDelegate        OnDismissed;
+	FSimpleDelegate        OnCancelled;
+	FNeutronAsyncCondition OnIsConfirmEnabled;
 
 	// Widgets
 	TSharedPtr<STextBlock>           TitleText;

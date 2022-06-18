@@ -10,11 +10,14 @@
 
 #include "Widgets/SCompoundWidget.h"
 
+#define LOCTEXT_NAMESPACE "SNeutronListView"
+
 /** Templatized list class to display elements from a TArray */
 template <typename ItemType>
 class SNeutronListView : public SCompoundWidget
 {
 	DECLARE_DELEGATE_RetVal_OneParam(TSharedRef<SWidget>, FNeutronOnGenerateItem, ItemType);
+	DECLARE_DELEGATE_RetVal_TwoParams(bool, FNeutronOnFilterItem, ItemType, TArray<int32>);
 	DECLARE_DELEGATE_RetVal_OneParam(FText, FNeutronOnGenerateTooltip, ItemType);
 	DECLARE_DELEGATE_TwoParams(FNeutronListSelectionChanged, ItemType, int32);
 
@@ -22,13 +25,16 @@ class SNeutronListView : public SCompoundWidget
 	    Slate arguments
 	----------------------------------------------------*/
 
-	SLATE_BEGIN_ARGS(SNeutronListView<ItemType>) : _Horizontal(false), _ButtonTheme("DefaultButton"), _ButtonSize("DoubleButtonSize")
+	SLATE_BEGIN_ARGS(SNeutronListView<ItemType>)
+		: _Horizontal(false), _ButtonTheme("DefaultButton"), _ButtonSize("DoubleButtonSize"), _FilterButtonSize("DefaultButtonSize")
 	{}
 
 	SLATE_ARGUMENT(SNeutronNavigationPanel*, Panel)
 	SLATE_ARGUMENT(const TArray<ItemType>*, ItemsSource)
+	SLATE_ARGUMENT(TArray<FText>, FilterOptions)
 
 	SLATE_EVENT(FNeutronOnGenerateItem, OnGenerateItem)
+	SLATE_EVENT(FNeutronOnFilterItem, OnFilterItem)
 	SLATE_EVENT(FNeutronOnGenerateTooltip, OnGenerateTooltip)
 	SLATE_EVENT(FNeutronListSelectionChanged, OnSelectionChanged)
 	SLATE_EVENT(FSimpleDelegate, OnSelectionDoubleClicked)
@@ -36,6 +42,7 @@ class SNeutronListView : public SCompoundWidget
 	SLATE_ARGUMENT(bool, Horizontal)
 	SLATE_ARGUMENT(FName, ButtonTheme)
 	SLATE_ARGUMENT(FName, ButtonSize)
+	SLATE_ARGUMENT(FName, FilterButtonSize)
 
 	SLATE_END_ARGS()
 
@@ -53,6 +60,7 @@ public:
 		Panel                    = InArgs._Panel;
 		ItemsSource              = InArgs._ItemsSource;
 		OnGenerateItem           = InArgs._OnGenerateItem;
+		OnFilterItem             = InArgs._OnFilterItem;
 		OnGenerateTooltip        = InArgs._OnGenerateTooltip;
 		OnSelectionChanged       = InArgs._OnSelectionChanged;
 		OnSelectionDoubleClicked = InArgs._OnSelectionDoubleClicked;
@@ -63,18 +71,56 @@ public:
 		NCHECK(Panel);
 		NCHECK(ItemsSource);
 
+		TSharedPtr<SHorizontalBox> FilterBox;
+
 		// clang-format off
 		ChildSlot
 		.VAlign(VAlign_Fill)
 		.HAlign(HAlign_Center)
 		[
-			SAssignNew(Container, SScrollBox)
-			.AnimateWheelScrolling(true)
-			.Style(&Theme.ScrollBoxStyle)
-			.ScrollBarVisibility(EVisibility::Collapsed)
-			.Orientation(InArgs._Horizontal ? Orient_Horizontal : Orient_Vertical)
-			.ConsumeMouseWheel(EConsumeMouseWheel::Always)
+			SNew(SVerticalBox)
+
+			+ SVerticalBox::Slot()
+			.AutoHeight()
+			[
+				SAssignNew(FilterBox, SHorizontalBox)
+			]
+		
+			+ SVerticalBox::Slot()
+			[
+				SAssignNew(Container, SScrollBox)
+				.AnimateWheelScrolling(true)
+				.Style(&Theme.ScrollBoxStyle)
+				.ScrollBarVisibility(EVisibility::Collapsed)
+				.Orientation(InArgs._Horizontal ? Orient_Horizontal : Orient_Vertical)
+				.ConsumeMouseWheel(EConsumeMouseWheel::Always)
+			]
 		];
+
+		// Build filters
+		for (const FText& Option : InArgs._FilterOptions)
+		{
+			TSharedRef<SNeutronButton> Button = Panel->SNeutronNew(SNeutronButton)
+			.Text(Option)
+			.HelpText(LOCTEXT("OptionHelp", "Toggle this filter"))
+			.Toggle(true)
+			.Theme(ButtonTheme)
+			.Size(InArgs._FilterButtonSize)
+			.OnClicked(FSimpleDelegate::CreateLambda([this]()
+			{
+				Refresh();
+			}));
+
+			Button->SetActive(true);
+			
+			FilterButtons.Add(Button);
+			FilterBox->AddSlot()
+			.AutoWidth()
+			[
+				Button
+			];
+		}
+
 		// clang-format on
 
 		// Initialize
@@ -91,7 +137,9 @@ public:
 	/** Refresh the list based on the items source */
 	void Refresh(int32 SelectedIndex = INDEX_NONE)
 	{
-		SelectedIndex          = FMath::Min(SelectedIndex, ItemsSource->Num() - 1);
+		PreRefresh();
+
+		SelectedIndex          = FMath::Min(SelectedIndex, FilteredItemsSource.Num() - 1);
 		InitiallySelectedIndex = SelectedIndex;
 
 		// Get the state of the focused button
@@ -120,7 +168,7 @@ public:
 
 		// Build new UI
 		int32 BuildIndex = 0;
-		for (ItemType Item : *ItemsSource)
+		for (ItemType Item : FilteredItemsSource)
 		{
 			// Add buttons
 			TSharedPtr<SNeutronButton> Button;
@@ -165,7 +213,7 @@ public:
 		}
 		else if (PreviousSelectedIndex != INDEX_NONE)
 		{
-			CurrentSelectedIndex = FMath::Min(CurrentSelectedIndex, ItemsSource->Num() - 1);
+			CurrentSelectedIndex = FMath::Min(CurrentSelectedIndex, FilteredItemsSource.Num() - 1);
 
 			PreviousSelectedIndex = FMath::Clamp(PreviousSelectedIndex, 0, BuildIndex - 1);
 			Panel->GetMenu()->SetFocusedButton(ListButtons[PreviousSelectedIndex], true);
@@ -190,8 +238,8 @@ public:
 	{
 		const FNeutronButtonTheme& Theme = FNeutronStyleSet::GetButtonTheme(ButtonTheme);
 
-		bool IsInitialItem = InitiallySelectedIndex >= 0 && ItemsSource && InitiallySelectedIndex < ItemsSource->Num() &&
-		                     Item == (*ItemsSource)[InitiallySelectedIndex];
+		bool IsInitialItem = InitiallySelectedIndex >= 0 && InitiallySelectedIndex < FilteredItemsSource.Num() &&
+		                     Item == FilteredItemsSource[InitiallySelectedIndex];
 
 		return IsInitialItem ? &Theme.ListOn : &Theme.ListOff;
 	}
@@ -205,8 +253,14 @@ public:
 	/** Get the currently selected item */
 	const ItemType& GetSelectedItem() const
 	{
-		NCHECK(CurrentSelectedIndex >= 0 && CurrentSelectedIndex < (*ItemsSource).Num());
-		return (*ItemsSource)[CurrentSelectedIndex];
+		NCHECK(CurrentSelectedIndex >= 0 && CurrentSelectedIndex < FilteredItemsSource.Num());
+		return FilteredItemsSource[CurrentSelectedIndex];
+	}
+
+	/** Get the filter buttons */
+	const TArray<TSharedPtr<SNeutronButton>>& GetFilterButtons() const
+	{
+		return FilterButtons;
 	}
 
 	/*----------------------------------------------------
@@ -214,6 +268,40 @@ public:
 	----------------------------------------------------*/
 
 protected:
+
+	/** Update the filtered list */
+	void PreRefresh()
+	{
+		// Execute the filter if it was provided
+		if (OnFilterItem.IsBound())
+		{
+			int32         CurrentIndex = 0;
+			TArray<int32> EnabledFilters;
+			for (const TSharedPtr<SNeutronButton>& Button : FilterButtons)
+			{
+				if (Button->IsActive())
+				{
+					EnabledFilters.Add(CurrentIndex);
+				}
+				CurrentIndex++;
+			}
+
+			FilteredItemsSource.Empty();
+			for (const ItemType& Item : *ItemsSource)
+			{
+				if (OnFilterItem.Execute(Item, EnabledFilters))
+				{
+					FilteredItemsSource.Add(Item);
+				}
+			}
+		}
+
+		// Failing that, just copy the list
+		else
+		{
+			FilteredItemsSource = *ItemsSource;
+		}
+	}
 
 	/** New list item was selected */
 	void OnElementSelected(ItemType Selected, int32 Index)
@@ -233,7 +321,9 @@ protected:
 	// Settings
 	SNeutronNavigationPanel*     Panel;
 	const TArray<ItemType>*      ItemsSource;
+	TArray<ItemType>             FilteredItemsSource;
 	FNeutronOnGenerateItem       OnGenerateItem;
+	FNeutronOnFilterItem         OnFilterItem;
 	FNeutronOnGenerateTooltip    OnGenerateTooltip;
 	FNeutronListSelectionChanged OnSelectionChanged;
 	FSimpleDelegate              OnSelectionDoubleClicked;
@@ -247,4 +337,7 @@ protected:
 	// Widgets
 	TSharedPtr<SScrollBox>             Container;
 	TArray<TSharedPtr<SNeutronButton>> ListButtons;
+	TArray<TSharedPtr<SNeutronButton>> FilterButtons;
 };
+
+#undef LOCTEXT_NAMESPACE

@@ -110,11 +110,11 @@ public:
 
 	/** Create a new modal panel */
 	template <typename T = class SNeutronModalPanel>
-	TSharedPtr<T> CreateModalPanel()
+	TSharedPtr<T> CreateModalPanel(FNeutronAsyncCondition ConfirmEnabled = FNeutronAsyncCondition())
 	{
 		TSharedPtr<T> Panel;
 
-		MainOverlay->AddSlot()[SAssignNew(Panel, T).Menu(this)];
+		MainOverlay->AddSlot()[SAssignNew(Panel, T).Menu(this).IsConfirmEnabled(ConfirmEnabled)];
 
 		return Panel;
 	}
