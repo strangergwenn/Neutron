@@ -104,15 +104,15 @@ public:
 
 	void Construct(const FArguments& InArgs)
 	{
-		Width = InArgs._Width;
-
 		const FNeutronMainTheme& Theme = FNeutronStyleSet::GetMainTheme();
+
+		Width = InArgs._Width.IsSet() ? InArgs._Width : Theme.GenericMenuWidth;
 
 		// clang-format off
 		ChildSlot
 		[
 			SNew(SBox)
-			.WidthOverride(InArgs._Width)
+			.WidthOverride(Width)
 			[
 				SAssignNew(TableBox, SVerticalBox)
 
