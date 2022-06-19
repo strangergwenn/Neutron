@@ -128,6 +128,12 @@ public:
 		// clang-format on
 	}
 
+	/** Empty the table */
+	void Clear()
+	{
+		TableBox->ClearChildren();
+	}
+
 	/** Add a table header */
 	void AddHeader(FText Label, FText Details = FText())
 	{
