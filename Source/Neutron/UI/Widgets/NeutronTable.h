@@ -106,7 +106,7 @@ public:
 	{
 		const FNeutronMainTheme& Theme = FNeutronStyleSet::GetMainTheme();
 
-		Width = InArgs._Width.IsSet() ? InArgs._Width : Theme.GenericMenuWidth;
+		Width = InArgs._Width.IsSet() && InArgs._Width.Get() > 0 ? InArgs._Width : Theme.GenericMenuWidth;
 
 		// clang-format off
 		ChildSlot
