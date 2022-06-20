@@ -39,7 +39,7 @@ void SNeutronMenu::Construct(const FArguments& InArgs)
 	// clang-format off
 	ChildSlot
 	[
-		SAssignNew(MainOverlay, SOverlay)
+		SAssignNew(ModalOverlay, SOverlay)
 
 		+ SOverlay::Slot()
 		[
@@ -388,6 +388,19 @@ void SNeutronMenu::RefreshNavigationPanel()
 	{
 		CurrentNavigationButtons = CurrentNavigationPanel->GetNavigationButtons();
 	}
+}
+
+bool SNeutronMenu::HasVisibleOverlay() const
+{
+	for (const TSharedPtr<SNeutronModalPanel>& ModalPanel : ModalPanels)
+	{
+		if (ModalPanel->IsVisible())
+		{
+			return true;
+		}
+	}
+
+	return false;
 }
 
 void SNeutronMenu::SetModalNavigationPanel(class SNeutronNavigationPanel* Panel)

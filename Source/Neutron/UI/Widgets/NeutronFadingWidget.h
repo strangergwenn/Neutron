@@ -55,7 +55,7 @@ public:
 		SCompoundWidget::Tick(AllottedGeometry, CurrentTime, DeltaTime);
 
 		// Update time
-		if ((FadeOut && CurrentDisplayTime > DisplayDuration) || IsDirty())
+		if ((FadeOut && CurrentDisplayTime > DisplayDuration) || IsDirty() || IsHidden())
 		{
 			CurrentFadeTime -= DeltaTime;
 		}
@@ -96,6 +96,12 @@ protected:
 
 	/** Return true to request a widget update */
 	virtual bool IsDirty() const
+	{
+		return false;
+	}
+
+	/** Return true to request staying hidden */
+	virtual bool IsHidden() const
 	{
 		return false;
 	}

@@ -114,10 +114,14 @@ public:
 	{
 		TSharedPtr<T> Panel;
 
-		MainOverlay->AddSlot()[SAssignNew(Panel, T).Menu(this).IsConfirmEnabled(ConfirmEnabled)];
+		ModalOverlay->AddSlot()[SAssignNew(Panel, T).Menu(this).IsConfirmEnabled(ConfirmEnabled)];
+		ModalPanels.Add(Panel);
 
 		return Panel;
 	}
+
+	/** Check if any modal panel is currently open */
+	bool HasVisibleOverlay() const;
 
 	/** Set a currently active navigation panel */
 	void SetModalNavigationPanel(class SNeutronNavigationPanel* Panel);
@@ -177,9 +181,10 @@ protected:
 	float AnalogNavMaxPeriod;
 
 	// General data
-	TWeakObjectPtr<class UNeutronMenuManager> MenuManager;
-	TSharedPtr<SBox>                          MainContainer;
-	TSharedPtr<class SOverlay>                MainOverlay;
+	TWeakObjectPtr<class UNeutronMenuManager>    MenuManager;
+	TSharedPtr<SBox>                             MainContainer;
+	TSharedPtr<class SOverlay>                   ModalOverlay;
+	TArray<TSharedPtr<class SNeutronModalPanel>> ModalPanels;
 
 	// Mouse input data
 	bool                            MousePressed;
