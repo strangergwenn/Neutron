@@ -124,13 +124,7 @@ void UNeutronSoundManager::BeginPlay(ANeutronPlayerController* PC, FNeutronMusic
 	// Get basic game pointers
 	const UNeutronGameUserSettings* GameUserSettings = Cast<UNeutronGameUserSettings>(GEngine->GetGameUserSettings());
 	NCHECK(GameUserSettings);
-
-	// Setup sound settings
 	SoundSetup = UNeutronAssetManager::Get()->GetDefaultAsset<UNeutronSoundSetup>();
-	SetMasterVolume(GameUserSettings->MasterVolume);
-	SetUIVolume(GameUserSettings->UIVolume);
-	SetEffectsVolume(GameUserSettings->EffectsVolume);
-	SetMusicVolume(GameUserSettings->MusicVolume);
 
 	// Be safe
 	NCHECK(SoundSetup->MasterSoundMix);
@@ -155,6 +149,12 @@ void UNeutronSoundManager::BeginPlay(ANeutronPlayerController* PC, FNeutronMusic
 	{
 		AudioDevice->SetBaseSoundMix(SoundSetup->MasterSoundMix);
 	}
+
+	// Setup sound settings
+	SetMasterVolume(GameUserSettings->MasterVolume);
+	SetUIVolume(GameUserSettings->UIVolume);
+	SetEffectsVolume(GameUserSettings->EffectsVolume);
+	SetMusicVolume(GameUserSettings->MusicVolume);
 
 	// Initialize the music instance
 	EnvironmentSoundInstances.Empty();
