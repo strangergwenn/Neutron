@@ -33,13 +33,6 @@
 		{
 			"Name": "OnlineSubsystemUtils",
 			"Enabled": true
-		},
-		{
-			"Name": "DLSS",
-			"Enabled": true,
-			"SupportedTargetPlatforms": [
-				"Win64"
-			]
 		}
 	]
 }

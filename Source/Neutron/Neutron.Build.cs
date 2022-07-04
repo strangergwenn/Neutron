@@ -38,13 +38,6 @@ public class Neutron : ModuleRules
 			"MoviePlayer"
 		});
 
-		if (Target.Platform.IsInGroup(UnrealPlatformGroup.Windows))
-		{
-		    PrivateDependencyModuleNames.AddRange(new string[] {
-		        "DLSS"
-		    });
-		}
-
 		if (Target.Type == TargetType.Editor)
 		{
 			PrivateDependencyModuleNames.AddRange(new string[] {
