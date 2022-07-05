@@ -5,7 +5,7 @@
 #include "Neutron/Actor/NeutronCaptureActor.h"
 #include "Neutron/Neutron.h"
 
-#include "AssetRegistryModule.h"
+#include "AssetRegistry/AssetRegistryModule.h"
 #include "Dom/JsonObject.h"
 
 // Statics
@@ -117,7 +117,7 @@ void UNeutronAssetManager::Initialize(class UNeutronGameInstance* GameInstance)
 
 	// Get assets
 	TArray<FAssetData> AssetList;
-	Registry.GetAssetsByClass(UNeutronAssetDescription::StaticClass()->GetFName(), AssetList, true);
+	Registry.GetAssetsByClass(UNeutronAssetDescription::StaticClass()->GetClassPathName(), AssetList, true);
 	for (FAssetData Asset : AssetList)
 	{
 		const UNeutronAssetDescription* Entry = Cast<UNeutronAssetDescription>(Asset.GetAsset());

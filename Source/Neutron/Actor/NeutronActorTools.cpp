@@ -9,7 +9,7 @@
 
 #include "Components/SceneComponent.h"
 #include "PhysicalMaterials/PhysicalMaterial.h"
-#include "AssetRegistryModule.h"
+#include "AssetRegistry/AssetRegistryModule.h"
 #include "Camera/CameraShakeBase.h"
 #include "Engine/World.h"
 #include "DrawDebugHelpers.h"
