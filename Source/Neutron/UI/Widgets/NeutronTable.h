@@ -14,12 +14,18 @@ class TNeutronTableValue
 {
 public:
 
-	TNeutronTableValue(T Value, const FText& Unit = FText()) : CurrentValue(Value), ValueUnit(Unit)
+	TNeutronTableValue(T Value, const FText& Unit = FText()) : CurrentValue(Value), ValueUnit(Unit), ExplicitColor(FLinearColor::Black)
 	{
 		ReferenceValue = GetDefaultValue();
 	}
 
-	TNeutronTableValue(T Value, T Reference, const FText& Unit) : CurrentValue(Value), ReferenceValue(Reference), ValueUnit(Unit)
+	TNeutronTableValue(T Value, const FLinearColor& Color) : CurrentValue(Value), ValueUnit(), ExplicitColor(Color)
+	{
+		ReferenceValue = GetDefaultValue();
+	}
+
+	TNeutronTableValue(T Value, T Reference, const FText& Unit)
+		: CurrentValue(Value), ReferenceValue(Reference), ValueUnit(Unit), ExplicitColor(FLinearColor::Black)
 	{}
 
 	// Generic number-focused display
@@ -32,10 +38,18 @@ public:
 		FNumberFormattingOptions DifferenceOptions = Options;
 		DifferenceOptions.AlwaysSign               = true;
 
-		// Build the comparison data
+		// Build the value string
 		FLinearColor Color = FLinearColor::White;
 		FText        Text  = FText::FromString(FText::AsNumber(CurrentValue, &Options).ToString() + " " + ValueUnit.ToString());
-		if (ReferenceValue >= 0 && CurrentValue != ReferenceValue)
+
+		// Explicit color mode
+		if (ExplicitColor != FLinearColor::Black)
+		{
+			Color = ExplicitColor;
+		}
+
+		// Comparison mode
+		else if (ReferenceValue != GetDefaultValue() && CurrentValue != ReferenceValue)
 		{
 			Color = CurrentValue > ReferenceValue ? Theme.PositiveColor : Theme.NegativeColor;
 			Text  = FText::FromString(
@@ -53,9 +67,10 @@ public:
 
 protected:
 
-	T     CurrentValue;
-	T     ReferenceValue;
-	FText ValueUnit;
+	T            CurrentValue;
+	T            ReferenceValue;
+	FText        ValueUnit;
+	FLinearColor ExplicitColor;
 };
 
 // Text override
@@ -65,9 +80,13 @@ TPair<FText, FLinearColor> TNeutronTableValue<FText>::GetDisplay() const
 	// Fetch the style data
 	const FNeutronMainTheme& Theme = FNeutronStyleSet::GetMainTheme();
 
-	// Build the comparison data
+	// Pick a color
 	FLinearColor Color = FLinearColor::White;
-	if (!ReferenceValue.IsEmpty() && !CurrentValue.EqualTo(ReferenceValue))
+	if (ExplicitColor != FLinearColor::Black)
+	{
+		Color = ExplicitColor;
+	}
+	else if (!ReferenceValue.IsEmpty() && !CurrentValue.EqualTo(ReferenceValue))
 	{
 		Color = Theme.PositiveColor;
 	}
