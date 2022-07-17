@@ -24,7 +24,6 @@ public:
 	UNeutronStaticMeshComponent()
 	{
 		PrimaryComponentTick.bCanEverTick = true;
-		SetRenderCustomDepth(true);
 	}
 
 	/*----------------------------------------------------

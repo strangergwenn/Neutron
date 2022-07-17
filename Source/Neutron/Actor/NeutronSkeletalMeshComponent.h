@@ -23,7 +23,6 @@ public:
 	UNeutronSkeletalMeshComponent()
 	{
 		PrimaryComponentTick.bCanEverTick = true;
-		SetRenderCustomDepth(true);
 	}
 
 	/*----------------------------------------------------

@@ -23,7 +23,6 @@ public:
 	UNeutronSplineMeshComponent()
 	{
 		PrimaryComponentTick.bCanEverTick = true;
-		SetRenderCustomDepth(true);
 	}
 
 	/*----------------------------------------------------
