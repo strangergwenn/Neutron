@@ -95,6 +95,7 @@ TPair<FText, FLinearColor> TNeutronTableValue<FText>::GetDisplay() const
 }
 
 // Text override
+template <>
 FText TNeutronTableValue<FText>::GetDefaultValue() const
 {
 	return FText();
