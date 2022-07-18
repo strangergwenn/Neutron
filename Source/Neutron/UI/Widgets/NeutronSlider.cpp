@@ -80,7 +80,7 @@ void SNeutronSlider::Construct(const FArguments& InArgs)
 		[
 			SAssignNew(Slider, SSlider)
 			.IsFocusable(false)
-			.Locked(TAttribute<bool>::Create(TAttribute<bool>::FGetter::CreateLambda([=]()
+			.Locked_Lambda([=]()
 			{
 				if (InArgs._Enabled.IsSet() || InArgs._Enabled.IsBound())
 				{
@@ -90,7 +90,7 @@ void SNeutronSlider::Construct(const FArguments& InArgs)
 				{
 					return false;
 				}
-			})))
+			})
 			.Value(InArgs._Value)
 			.MinValue(InArgs._MinValue)
 			.MaxValue(InArgs._MaxValue)
