@@ -171,6 +171,6 @@ public:
 	/** Move a component and test for collision on the entire actor
 	    Taken from UPrimitiveComponent - check for updates when updating UE ! */
 	static bool MoveComponentHierarchy(UPrimitiveComponent* RootComponent, const FVector& OriginalLocation, const FVector& Delta,
-		const FQuat& NewRotationQuat, bool bSweep, FHitResult* OutHit, ETeleportType Teleport,
+		const FQuat& NewRotationQuat, bool bSweep, struct FHitResult* OutHit, ETeleportType Teleport,
 		FInternalSetWorldLocationAndRotation MovementCallback);
 };
