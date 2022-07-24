@@ -201,7 +201,7 @@ void SNeutronButton::Construct(const FArguments& InArgs)
 			.Padding(Theme.IconPadding)
 			[
 				SNew(SNeutronKeyLabel)
-				.Key(this, &SNeutronButton::GetActionKey)
+				.Action(this, &SNeutronButton::GetActionName)
 			];
 		}
 
@@ -344,9 +344,9 @@ void SNeutronButton::SetHelpText(FText NewText)
 	HelpText.Set(NewText);
 }
 
-FKey SNeutronButton::GetActionKey() const
+FName SNeutronButton::GetActionName() const
 {
-	return UNeutronMenuManager::Get()->GetFirstActionKey(Action.Get());
+	return Action.Get();
 }
 
 /*----------------------------------------------------

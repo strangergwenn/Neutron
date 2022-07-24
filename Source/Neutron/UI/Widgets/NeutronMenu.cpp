@@ -537,7 +537,8 @@ FReply SNeutronMenu::HandleKeyPress(FKey Key)
 	// Trigger action buttons
 	for (TSharedPtr<SNeutronButton>& Button : GetActionButtons())
 	{
-		if (Button->GetActionKey() == Key && Button->IsButtonEnabled() && Button->GetVisibility() == EVisibility::Visible)
+		if (MenuManager->GetFirstActionKey(Button->GetActionName()) == Key && Button->IsButtonEnabled() &&
+			Button->GetVisibility() == EVisibility::Visible)
 		{
 			bool ActionPassedToWidget = false;
 			bool WasFocused           = Button->IsFocused();
@@ -570,6 +571,10 @@ FReply SNeutronMenu::HandleKeyPress(FKey Key)
 			FocusedButton->OnButtonClicked();
 			Result = FReply::Handled();
 		}
+	}
+	else if (CurrentNavigationPanel)
+	{
+		CurrentNavigationPanel->OnKeyPressed(Key);
 	}
 
 	return Result;

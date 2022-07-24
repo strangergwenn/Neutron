@@ -2,6 +2,7 @@
 
 #include "NeutronKeyLabel.h"
 #include "Neutron/UI/NeutronUI.h"
+#include "Neutron/System/NeutronMenuManager.h"
 
 /*----------------------------------------------------
     Construct
@@ -11,7 +12,8 @@ void SNeutronKeyLabel::Construct(const FArguments& InArgs)
 {
 	// Setup
 	const FNeutronMainTheme& Theme = FNeutronStyleSet::GetMainTheme();
-	KeyName                        = InArgs._Key;
+	Action                         = InArgs._Action;
+	ExplicitKey                    = InArgs._Key;
 	CurrentAlpha                   = InArgs._Alpha;
 
 	// clang-format off
@@ -45,14 +47,26 @@ void SNeutronKeyLabel::Construct(const FArguments& InArgs)
     Callbacks
 ----------------------------------------------------*/
 
+FKey SNeutronKeyLabel::GetBoundKey() const
+{
+	if (Action.Get() != NAME_None)
+	{
+		return UNeutronMenuManager::Get()->GetFirstActionKey(Action.Get());
+	}
+	else
+	{
+		return ExplicitKey.Get();
+	}
+}
+
 FText SNeutronKeyLabel::GetKeyText() const
 {
-	return FNeutronStyleSet::GetKeyDisplay(KeyName.Get()).Key;
+	return FNeutronStyleSet::GetKeyDisplay(GetBoundKey()).Key;
 }
 
 const FSlateBrush* SNeutronKeyLabel::GetKeyIcon() const
 {
-	return FNeutronStyleSet::GetKeyDisplay(KeyName.Get()).Value;
+	return FNeutronStyleSet::GetKeyDisplay(GetBoundKey()).Value;
 }
 
 FSlateColor SNeutronKeyLabel::GetKeyIconColor() const

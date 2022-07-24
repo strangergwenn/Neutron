@@ -217,8 +217,8 @@ public:
 		return State;
 	}
 
-	/** Get the key binding for closing this menu */
-	FKey GetActionKey() const;
+	/** Get the action binding for closing this menu */
+	FName GetActionName() const;
 
 	/*----------------------------------------------------
 	    Callbacks

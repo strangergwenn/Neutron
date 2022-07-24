@@ -71,7 +71,7 @@ void SNeutronSlider::Construct(const FArguments& InArgs)
 			.Visibility(this, &SNeutronSlider::GetActionVisibility)
 			[
 				SNew(SNeutronKeyLabel)
-				.Key(this, &SNeutronButton::GetActionKey)
+				.Action(this, &SNeutronButton::GetActionName)
 			]
 		]
 	

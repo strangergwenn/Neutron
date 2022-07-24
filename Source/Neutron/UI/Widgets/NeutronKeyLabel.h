@@ -17,6 +17,7 @@ class NEUTRON_API SNeutronKeyLabel : public SCompoundWidget
 	SLATE_BEGIN_ARGS(SNeutronKeyLabel) : _Alpha(1)
 	{}
 
+	SLATE_ATTRIBUTE(FName, Action)
 	SLATE_ATTRIBUTE(FKey, Key)
 	SLATE_ATTRIBUTE(float, Alpha)
 
@@ -39,6 +40,8 @@ public:
 
 protected:
 
+	FKey GetBoundKey() const;
+
 	FText GetKeyText() const;
 
 	const FSlateBrush* GetKeyIcon() const;
@@ -54,6 +57,7 @@ protected:
 protected:
 
 	// Attributes
-	TAttribute<FKey>  KeyName;
+	TAttribute<FKey>  ExplicitKey;
+	TAttribute<FName> Action;
 	TAttribute<float> CurrentAlpha;
 };

@@ -86,6 +86,10 @@ public:
 	virtual void VerticalAnalogInput(float Value)
 	{}
 
+	/** Additional key press event */
+	virtual void OnKeyPressed(const FKey& Key)
+	{}
+
 	/** Focus changed to this button */
 	virtual void OnFocusChanged(TSharedPtr<class SNeutronButton> FocusButton)
 	{}
