@@ -13,7 +13,7 @@ class SNeutronFadingWidget : public SCompoundWidget
 	    Slate arguments
 	----------------------------------------------------*/
 
-	SLATE_BEGIN_ARGS(SNeutronFadingWidget) : _FadeDuration(ENeutronUIConstants::FadeDurationShort), _ColorAndOpacity(FLinearColor::White)
+	SLATE_BEGIN_ARGS(SNeutronFadingWidget) : _FadeDuration(ENeutronUIConstants::FadeDurationMinimal), _ColorAndOpacity(FLinearColor::White)
 	{}
 
 	SLATE_ARGUMENT(float, FadeDuration)
@@ -204,7 +204,7 @@ public:
 
 		// clang-format off
 		SNeutronFadingWidget::Construct(SNeutronFadingWidget::FArguments()
-			.FadeDuration(ENeutronUIConstants::FadeDurationShort)
+			.FadeDuration(ENeutronUIConstants::FadeDurationMinimal)
 			.DisplayDuration(4.0f)
 			.ColorAndOpacity(InArgs._ColorAndOpacity)
 		);
@@ -279,7 +279,7 @@ public:
 
 		// clang-format off
 		SNeutronFadingWidget::Construct(SNeutronFadingWidget::FArguments()
-			.FadeDuration(ENeutronUIConstants::FadeDurationShort)
+			.FadeDuration(ENeutronUIConstants::FadeDurationMinimal)
 			.DisplayDuration(4.0f)
 		);
 
@@ -368,7 +368,7 @@ public:
 
 		// clang-format off
 		SNeutronFadingWidget::Construct(SNeutronFadingWidget::FArguments()
-			.FadeDuration(ENeutronUIConstants::FadeDurationShort)
+			.FadeDuration(ENeutronUIConstants::FadeDurationMinimal)
 			.DisplayDuration(4.0f)
 		);
 
