@@ -29,7 +29,7 @@ public:
 	{}
 
 	// Generic number-focused display
-	TPair<FText, FLinearColor> GetDisplay() const
+	inline TPair<FText, FLinearColor> GetDisplay() const
 	{
 		// Fetch the style data
 		const FNeutronMainTheme& Theme = FNeutronStyleSet::GetMainTheme();
@@ -60,7 +60,7 @@ public:
 	}
 
 	// Generic number-focused default
-	T GetDefaultValue() const
+	inline T GetDefaultValue() const
 	{
 		return -1;
 	}
@@ -75,7 +75,7 @@ protected:
 
 // Text override
 template <>
-TPair<FText, FLinearColor> TNeutronTableValue<FText>::GetDisplay() const
+inline TPair<FText, FLinearColor> TNeutronTableValue<FText>::GetDisplay() const
 {
 	// Fetch the style data
 	const FNeutronMainTheme& Theme = FNeutronStyleSet::GetMainTheme();
@@ -96,7 +96,7 @@ TPair<FText, FLinearColor> TNeutronTableValue<FText>::GetDisplay() const
 
 // Text override
 template <>
-FText TNeutronTableValue<FText>::GetDefaultValue() const
+inline FText TNeutronTableValue<FText>::GetDefaultValue() const
 {
 	return FText();
 }
