@@ -65,6 +65,7 @@ public:
 
 			SBox::Construct(SBox::FArguments()
 				.WidthOverride(Size.Width)
+				.HeightOverride(Size.Height)
 				.Padding(Padding)
 				[
 					InArgs._Content.Widget
