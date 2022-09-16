@@ -35,12 +35,11 @@ struct FNeutronButtonState
 /** Button layout imposter class */
 class NEUTRON_API SNeutronButtonLayout : public SBox
 {
-	SLATE_BEGIN_ARGS(SNeutronButtonLayout) : _Theme("DefaultButton"), _Size(NAME_None), _WidthOnly(true)
+	SLATE_BEGIN_ARGS(SNeutronButtonLayout) : _Theme("DefaultButton"), _Size(NAME_None)
 	{}
 
 	SLATE_ARGUMENT(FName, Theme)
 	SLATE_ARGUMENT(FName, Size)
-	SLATE_ARGUMENT(bool, WidthOnly)
 	SLATE_DEFAULT_SLOT(FArguments, Content)
 
 	SLATE_END_ARGS()
@@ -52,11 +51,8 @@ public:
 		// Build padding
 		const FNeutronButtonTheme& Theme   = FNeutronStyleSet::GetButtonTheme(InArgs._Theme);
 		FMargin                    Padding = Theme.HoverAnimationPadding + 1;
-		if (InArgs._WidthOnly)
-		{
-			Padding.Top    = 0;
-			Padding.Bottom = 0;
-		}
+		Padding.Top                        = 0;
+		Padding.Bottom                     = 0;
 
 		// clang-format off
 		if (InArgs._Size != NAME_None)
@@ -65,7 +61,7 @@ public:
 
 			SBox::Construct(SBox::FArguments()
 				.WidthOverride(Size.Width)
-				.HeightOverride(Size.Height)
+				.MinDesiredHeight(Size.Height)
 				.Padding(Padding)
 				[
 					InArgs._Content.Widget
