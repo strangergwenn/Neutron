@@ -261,7 +261,7 @@ private:
 	const UNeutronSoundSetup* SoundSetup;
 
 	// General state
-	FAudioDeviceHandle                     AudioDevice;
+	FAudioDevice*                          AudioDevice;
 	TMap<FName, TArray<class USoundBase*>> MusicCatalog;
 	FNeutronMusicCallback                  MusicCallback;
 	FName                                  CurrentMusicTrack;

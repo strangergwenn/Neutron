@@ -144,7 +144,7 @@ void UNeutronSoundManager::BeginPlay(ANeutronPlayerController* PC, FNeutronMusic
 	}
 
 	// Initialize the sound device and master mix
-	AudioDevice = PC->GetWorld()->GetAudioDevice();
+	AudioDevice = PC->GetWorld()->GetAudioDeviceRaw();
 	if (AudioDevice)
 	{
 		AudioDevice->SetBaseSoundMix(SoundSetup->MasterSoundMix);
