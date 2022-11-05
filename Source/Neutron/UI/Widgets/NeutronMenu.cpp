@@ -544,7 +544,7 @@ FReply SNeutronMenu::HandleKeyPress(FKey Key)
 			bool WasFocused           = Button->IsFocused();
 
 			if (CurrentNavigationPanel == nullptr || CurrentNavigationPanel->IsButtonActionAllowed(Button) ||
-				AdditionalActionButtons.Contains(Button))
+				MenuActionButtons.Contains(Button))
 			{
 				Button->OnButtonClicked();
 				ActionPassedToWidget = true;

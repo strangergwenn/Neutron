@@ -258,10 +258,11 @@ void SNeutronTabView::Construct(const FArguments& InArgs)
 		Header->AddSlot()
 		.AutoWidth()
 		[
-			SNew(SNeutronButton) // No navigation
+			InArgs._Menu->SNeutronNew(SNeutronButton)
 			.Icon(Arg._Icon)
 			.Theme("TabButton")
 			.Size("TabButtonSize")
+			.Action(Arg._Action)
 			.Text(Arg._Header)
 			.HelpText(Arg._HeaderHelp)
 			.OnClicked(this, &SNeutronTabView::SetTabIndex, Index)

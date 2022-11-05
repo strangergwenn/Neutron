@@ -135,8 +135,6 @@ public:
 	/** Get the currently focused button */
 	TSharedPtr<class SNeutronButton> GetFocusedButton();
 
-protected:
-
 	/** Create a new button that can be triggered by actions */
 	template <typename WidgetType, typename RequiredArgsPayloadType>
 	TSlateDecl<WidgetType, RequiredArgsPayloadType> NewNeutronButton(
@@ -145,16 +143,18 @@ protected:
 		auto Button =
 			TSlateDecl<WidgetType, RequiredArgsPayloadType>(InType, InFile, OnLine, Forward<RequiredArgsPayloadType>(InRequiredArgs));
 
-		AdditionalActionButtons.Add(Button._Widget);
+		MenuActionButtons.Add(Button._Widget);
 
 		return Button;
 	}
+
+protected:
 
 	/** Get all action buttons */
 	TArray<TSharedPtr<class SNeutronButton>> GetActionButtons() const
 	{
 		TArray<TSharedPtr<class SNeutronButton>> Result = CurrentNavigationButtons;
-		Result.Append(AdditionalActionButtons);
+		Result.Append(MenuActionButtons);
 		return Result;
 	}
 
@@ -200,7 +200,7 @@ protected:
 	class SNeutronNavigationPanel*           CurrentNavigationPanel;
 	class SNeutronNavigationPanel*           PreviousNavigationPanel;
 	TArray<TSharedPtr<class SNeutronButton>> CurrentNavigationButtons;
-	TArray<TSharedPtr<class SNeutronButton>> AdditionalActionButtons;
+	TArray<TSharedPtr<class SNeutronButton>> MenuActionButtons;
 	EUINavigation                            CurrentAnalogNavigation;
 	float                                    CurrentAnalogNavigationTime;
 };

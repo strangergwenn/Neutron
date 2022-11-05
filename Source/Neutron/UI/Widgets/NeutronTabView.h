@@ -96,6 +96,7 @@ public:
 		SLATE_ATTRIBUTE(bool, Blur)
 		SLATE_ATTRIBUTE(const FSlateBrush*, Icon)
 		SLATE_ATTRIBUTE(const FSlateBrush*, Background)
+		SLATE_ATTRIBUTE(FName, Action)
 
 		SLATE_SLOT_END_ARGS()
 	};
@@ -106,10 +107,12 @@ public:
 	    Slate arguments
 	----------------------------------------------------*/
 
-	SLATE_BEGIN_ARGS(SNeutronTabView) : _LeftNavigation(), _RightNavigation(), _End(), _Header()
+	SLATE_BEGIN_ARGS(SNeutronTabView) : _Menu(nullptr), _LeftNavigation(), _RightNavigation(), _End(), _Header()
 	{}
 
 	SLATE_SLOT_ARGUMENT(FSlot, Slots)
+
+	SLATE_ARGUMENT(SNeutronMenu*, Menu)
 
 	SLATE_NAMED_SLOT(FArguments, LeftNavigation)
 
