@@ -19,6 +19,11 @@ public:
 		ReferenceValue = GetDefaultValue();
 	}
 
+	TNeutronTableValue(T Value, const FText& Unit, const FLinearColor& Color) : CurrentValue(Value), ValueUnit(Unit), ExplicitColor(Color)
+	{
+		ReferenceValue = GetDefaultValue();
+	}
+
 	TNeutronTableValue(T Value, const FLinearColor& Color) : CurrentValue(Value), ValueUnit(), ExplicitColor(Color)
 	{
 		ReferenceValue = GetDefaultValue();
