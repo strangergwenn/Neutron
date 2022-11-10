@@ -235,11 +235,18 @@ protected:
 		{
 			Row->AddSlot()
 			[
-				SNew(STextBlock)
-				.Text(TextAndColor.Key)
-				.TextStyle(&TextStyle)
-				.WrapTextAt(Width.Get() / ColumnCount)
+				SNew(SBorder)
+				.Padding(0)
 				.ColorAndOpacity(TextAndColor.Value)
+				.BorderImage(new FSlateNoResource)
+				[
+					SNew(SRichTextBlock)
+					.Text(TextAndColor.Key)
+					.TextStyle(&TextStyle)
+					.WrapTextAt(Width.Get() / ColumnCount)
+					.DecoratorStyleSet(&FNeutronStyleSet::GetStyle())
+					+ SRichTextBlock::ImageDecorator()
+				]
 			];
 		}
 
