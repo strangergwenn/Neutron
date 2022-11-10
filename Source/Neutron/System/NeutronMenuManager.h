@@ -127,6 +127,12 @@ public:
 		return CurrentMenuState == ENeutronFadeState::FadingFromBlack;
 	}
 
+	/** Check if the menu system is fully hidden */
+	bool IsBlack() const
+	{
+		return CurrentMenuState == ENeutronFadeState::Black;
+	}
+
 	/** Request opening of the main menu */
 	void OpenMenu(FNeutronAsyncAction Action = FNeutronAsyncAction(), FNeutronAsyncCondition Condition = FNeutronAsyncCondition());
 
