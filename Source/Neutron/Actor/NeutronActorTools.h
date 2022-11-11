@@ -127,6 +127,12 @@ public:
 		ApplyFilter(CurrentPosition.Z, CurrentVelocity.Z, TargetPosition.Z, DeltaTime, IsGamepad);
 	}
 
+	void ApplyFilterCircular(FVector2D& CurrentPosition, FVector2D& CurrentVelocity, FVector2D& TargetPosition, const float DeltaTime,
+		const bool IsGamepad) const
+	{
+		ApplyFilter(CurrentPosition, CurrentVelocity, TargetPosition, DeltaTime, IsGamepad);
+	}
+
 public:
 
 	// Angular velocity of camera in °/s
