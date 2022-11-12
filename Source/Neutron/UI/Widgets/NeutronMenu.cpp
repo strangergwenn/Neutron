@@ -48,7 +48,7 @@ void SNeutronMenu::Construct(const FArguments& InArgs)
 	];
 	// clang-format on
 
-	SmoothedMouseLocation.SetPeriod(0.1f);
+	SmoothedMouseLocation.SetPeriod(0.2f);
 }
 
 /*----------------------------------------------------
