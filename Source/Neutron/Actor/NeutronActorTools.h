@@ -77,8 +77,7 @@ struct NEUTRON_API FNeutronCameraInputFilter
 
 public:
 
-	FNeutronCameraInputFilter()
-		: Velocity(150.0f), Acceleration(250.0f), Resistance(1.0f / 360.0f), InputPower(3.0f), Brake(2.0f), Brake2(4.0f)
+	FNeutronCameraInputFilter() : Velocity(150.0), Acceleration(250.0), Resistance(1.0f / 360.0), InputPower(3.0), Brake(2.0), Brake2(4.0)
 	{}
 
 public:
@@ -88,8 +87,7 @@ public:
 	void ApplyFilter(T& CurrentPosition, T& CurrentVelocity, T& TargetPosition, const float DeltaTime, const bool IsGamepad) const
 	{
 		const UNeutronGameUserSettings* GameUserSettings = Cast<UNeutronGameUserSettings>(GEngine->GetGameUserSettings());
-
-		T MaximumVelocity = Velocity * (IsGamepad ? GameUserSettings->GamepadSensitivity : GameUserSettings->MouseSensitivity);
+		const T MaximumVelocity = Velocity * (IsGamepad ? GameUserSettings->GamepadSensitivity : GameUserSettings->MouseSensitivity);
 
 		// Compute acceleration and resistance
 		T Acc = FMath::Pow(TargetPosition, static_cast<T>(InputPower)) * Acceleration;
@@ -137,27 +135,27 @@ public:
 
 	// Angular velocity of camera in °/s
 	UPROPERTY(Category = Neutron, EditDefaultsOnly)
-	float Velocity;
+	double Velocity;
 
 	// Camera acceleration force in °/s²
 	UPROPERTY(Category = Neutron, EditDefaultsOnly)
-	float Acceleration;
+	double Acceleration;
 
 	// Camera acceleration force as a multiplier of velocity
 	UPROPERTY(Category = Neutron, EditDefaultsOnly)
-	float Resistance;
+	double Resistance;
 
 	// Power function applied to inputs
 	UPROPERTY(Category = Neutron, EditDefaultsOnly)
-	float InputPower;
+	double InputPower;
 
 	// Brake component 1
 	UPROPERTY(Category = Neutron, EditDefaultsOnly)
-	float Brake;
+	double Brake;
 
 	// Brake component 2
 	UPROPERTY(Category = Neutron, EditDefaultsOnly)
-	float Brake2;
+	double Brake2;
 };
 
 /*----------------------------------------------------
