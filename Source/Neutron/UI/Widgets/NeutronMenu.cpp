@@ -155,7 +155,7 @@ FReply SNeutronMenu::OnMouseButtonDown(const FGeometry& MyGeometry, const FPoint
 		FWidgetPath WidgetsUnderCursor = FSlateApplication::Get().LocateWindowUnderMouse(
 			MouseEvent.GetScreenSpacePosition(), FSlateApplication::Get().GetTopLevelWindows(), false, MouseEvent.GetUserIndex());
 
-		if (WidgetsUnderCursor.IsValid() && &WidgetsUnderCursor.GetLastWidget().Get() == CurrentNavigationPanel ||
+		if ((WidgetsUnderCursor.IsValid() && &WidgetsUnderCursor.GetLastWidget().Get() == CurrentNavigationPanel) ||
 			CurrentNavigationPanel->IsClickInsideMenuAllowed())
 		{
 			CurrentNavigationPanel->OnClicked(Position);
