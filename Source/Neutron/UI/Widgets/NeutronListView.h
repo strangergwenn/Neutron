@@ -216,6 +216,8 @@ public:
 			CurrentSelectedIndex = FMath::Min(CurrentSelectedIndex, FilteredItemsSource.Num() - 1);
 
 			PreviousSelectedIndex = FMath::Clamp(PreviousSelectedIndex, 0, BuildIndex - 1);
+			PreviousSelectedIndex = FMath::Min(PreviousSelectedIndex, ListButtons.Num() - 1);
+
 			Panel->GetMenu()->SetFocusedButton(ListButtons[PreviousSelectedIndex], true);
 			ListButtons[PreviousSelectedIndex]->GetState() = PreviousSelectedButtonState;
 		}
