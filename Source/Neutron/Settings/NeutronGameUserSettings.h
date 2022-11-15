@@ -46,12 +46,16 @@ public:
 	virtual void ApplySettings(bool bCheckForCommandLineOverrides) override;
 
 	/*----------------------------------------------------
-	    Properties
+	    System
 	----------------------------------------------------*/
 
 	/** Enable the crash reporter */
 	UPROPERTY(Config, BlueprintReadOnly, VisibleAnywhere)
 	bool EnableCrashReports;
+
+	/*----------------------------------------------------
+	    Gameplay / visuals
+	----------------------------------------------------*/
 
 	/** Mouse sensitivity */
 	UPROPERTY(Config, BlueprintReadOnly, VisibleAnywhere)
@@ -60,6 +64,18 @@ public:
 	/** Gamepad sensitivity */
 	UPROPERTY(Config, BlueprintReadOnly, VisibleAnywhere)
 	float GamepadSensitivity;
+
+	/** Vertical FOV in degrees */
+	UPROPERTY(Config, BlueprintReadOnly, VisibleAnywhere)
+	float FOV;
+
+	/** Amount of motion blur */
+	UPROPERTY(Config, BlueprintReadOnly, VisibleAnywhere)
+	float MotionBlurAmount;
+
+	/*----------------------------------------------------
+	    Sound
+	----------------------------------------------------*/
 
 	/** Global sound volume */
 	UPROPERTY(Config, BlueprintReadOnly, VisibleAnywhere)
@@ -77,9 +93,9 @@ public:
 	UPROPERTY(Config, BlueprintReadOnly, VisibleAnywhere)
 	int32 MusicVolume;
 
-	/** Vertical FOV in degrees */
-	UPROPERTY(Config, BlueprintReadOnly, VisibleAnywhere)
-	float FOV;
+	/*----------------------------------------------------
+	    Graphics
+	----------------------------------------------------*/
 
 	/** Enable TSR */
 	UPROPERTY(Config, BlueprintReadOnly, VisibleAnywhere)

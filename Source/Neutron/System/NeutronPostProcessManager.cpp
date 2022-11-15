@@ -109,10 +109,12 @@ void UNeutronPostProcessManager::Tick(float DeltaTime)
 		UpdateFunction.ExecuteIfBound(PostProcessVolume, PostProcessMaterials, CurrentPostProcess, TargetPostProcess, CurrentPresetAlpha);
 
 		// Apply config-driven settings
-		UNeutronGameUserSettings* GameUserSettings        = Cast<UNeutronGameUserSettings>(GEngine->GetGameUserSettings());
-		PostProcessVolume->Settings.bOverride_BloomMethod = true;
+		UNeutronGameUserSettings* GameUserSettings             = Cast<UNeutronGameUserSettings>(GEngine->GetGameUserSettings());
+		PostProcessVolume->Settings.bOverride_MotionBlurAmount = true;
+		PostProcessVolume->Settings.bOverride_BloomMethod      = true;
 		PostProcessVolume->Settings.bOverride_DynamicGlobalIlluminationMethod = true;
 		PostProcessVolume->Settings.bOverride_ReflectionMethod                = true;
+		PostProcessVolume->Settings.MotionBlurAmount                          = GameUserSettings->MotionBlurAmount;
 		PostProcessVolume->Settings.BloomMethod                               = GameUserSettings->EnableCinematicBloom ? BM_FFT : BM_SOG;
 		PostProcessVolume->Settings.DynamicGlobalIlluminationMethod =
 			GameUserSettings->EnableLumen ? EDynamicGlobalIlluminationMethod::Lumen : EDynamicGlobalIlluminationMethod::ScreenSpace;
