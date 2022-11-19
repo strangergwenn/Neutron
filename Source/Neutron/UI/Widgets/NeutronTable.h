@@ -58,7 +58,7 @@ public:
 		{
 			Color = CurrentValue > ReferenceValue ? Theme.PositiveColor : Theme.NegativeColor;
 			Text  = FText::FromString(
-				 Text.ToString() + " (" + FText::AsNumber(CurrentValue - ReferenceValue, &DifferenceOptions).ToString() + ")");
+                Text.ToString() + " (" + FText::AsNumber(CurrentValue - ReferenceValue, &DifferenceOptions).ToString() + ")");
 		}
 
 		return TPair<FText, FLinearColor>(Text, Color);
@@ -111,7 +111,6 @@ inline FText TNeutronTableValue<FText>::GetDefaultValue() const
 ----------------------------------------------------*/
 
 /** Generic table type */
-template <int32 ColumnCount>
 class SNeutronTable : public SCompoundWidget
 {
 	SLATE_BEGIN_ARGS(SNeutronTable) : _Width(FOptionalSize())
@@ -131,7 +130,8 @@ public:
 	{
 		const FNeutronMainTheme& Theme = FNeutronStyleSet::GetMainTheme();
 
-		Width = InArgs._Width.IsSet() && InArgs._Width.Get() > 0 ? InArgs._Width : Theme.GenericMenuWidth;
+		Width       = InArgs._Width.IsSet() && InArgs._Width.Get() > 0 ? InArgs._Width : Theme.GenericMenuWidth;
+		ColumnCount = 0;
 
 		// clang-format off
 		ChildSlot
@@ -157,6 +157,7 @@ public:
 	void Clear()
 	{
 		TableBox->ClearChildren();
+		ColumnCount = 0;
 	}
 
 	/** Add a table header */
@@ -176,6 +177,7 @@ public:
 			ColorValues.Add(TPair<FText, FLinearColor>(Text, FLinearColor::White));
 		}
 
+		ColumnCount = FMath::Max(ColumnCount, Details.Num() + 1);
 		AddRow(Label, ColorValues, Theme.InfoFont, true);
 	}
 
@@ -198,6 +200,7 @@ public:
 			ColorValues.Add(Value.GetDisplay());
 		}
 
+		ColumnCount = FMath::Max(ColumnCount, Values.Num() + 1);
 		AddRow(Label, ColorValues, Theme.MainFont, false);
 	}
 
@@ -260,6 +263,7 @@ protected:
 	TSharedPtr<SVerticalBox> TableBox;
 	bool                     EvenRow;
 	FOptionalSize            Width;
+	int32                    ColumnCount;
 };
 
 #undef LOCTEXT_NAMESPACE
