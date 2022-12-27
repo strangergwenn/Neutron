@@ -7,7 +7,7 @@
 #include "RenderUtils.h"
 #include "RenderCore.h"
 
-#define HAS_DLSS PLATFORM_WINDOWS && 0
+#define HAS_DLSS PLATFORM_WINDOWS && 1
 
 #if HAS_DLSS
 #include "DLSS.h"

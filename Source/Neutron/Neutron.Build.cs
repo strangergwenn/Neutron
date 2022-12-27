@@ -43,6 +43,13 @@ public class Neutron : ModuleRules
 			PrivateDependencyModuleNames.AddRange(new string[] {
 				"UnrealEd"
 			});
-		}
-	}
+        }
+
+        if (Target.Platform.IsInGroup(UnrealPlatformGroup.Windows))
+        {
+            PrivateDependencyModuleNames.AddRange(new string[] {
+                "DLSS"
+            });
+        }
+    }
 }
