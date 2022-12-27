@@ -77,7 +77,7 @@ void UNeutronGameUserSettings::ApplyCustomGraphicsSettings()
 	IConsoleVariable* ScreenPercentageVar = IConsoleManager::Get().FindConsoleVariable(TEXT("r.ScreenPercentage"));
 	if (ScreenPercentageVar)
 	{
-		ScreenPercentageVar->Set(EnableDLSS ? 100 : ScreenPercentage, ECVF_SetByConsole);
+		ScreenPercentageVar->Set(ScreenPercentage, ECVF_SetByConsole);
 	}
 }
 
